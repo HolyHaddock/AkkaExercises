@@ -1,4 +1,4 @@
-package com.ticketseller
+package com.akkaexercises.ticketseller
 
 import scala.concurrent.duration._
 import akka.actor.Actor
@@ -8,7 +8,7 @@ import akka.actor.Props
 import akka.pattern.ask
 import akka.util.Timeout
 import scala.collection.mutable.ListBuffer
-
+import com.akkaexercises.util.TestActorSystem
 
 case class Game(name : String, date : String, attendance : Int)
 case class Report
@@ -34,11 +34,7 @@ class TicketSeller(game : Game) extends Actor with ActorLogging {
   }
 }
 
-
-object TicketSeller extends App {
-  val system = ActorSystem()
-  implicit val timeout = Timeout(5 seconds)
-  implicit val ec = system.dispatcher
+object TicketSeller extends App with TestActorSystem {
 
   val streetUrchin = system.actorOf(Props(creator = {() => new TicketSeller(Game("Rugby Sevens", "02-06-2013", 30))}))
 

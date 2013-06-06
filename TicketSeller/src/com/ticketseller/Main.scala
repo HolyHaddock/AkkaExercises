@@ -11,9 +11,7 @@ import scala.collection.mutable.ListBuffer
 
 
 case class Game(name : String, date : String, attendance : Int)
-
 case class Report
-
 case class BuyTickets(whoFor : String, quantity : Int)
 
 class TicketSeller(game : Game) extends Actor with ActorLogging {
@@ -37,34 +35,24 @@ class TicketSeller(game : Game) extends Actor with ActorLogging {
 }
 
 
-object Main {
+object TicketSeller extends App {
+  val system = ActorSystem()
+  implicit val timeout = Timeout(5 seconds)
+  implicit val ec = system.dispatcher
 
-  def main(args : Array[String]) {
-    implicit val timeout = Timeout(5 seconds)
+  val streetUrchin = system.actorOf(Props(creator = {() => new TicketSeller(Game("Rugby Sevens", "02-06-2013", 30))}))
 
-	val system = ActorSystem()
-	
-	implicit val ec = system.dispatcher
+  streetUrchin ? BuyTickets("Howard", 4)
+  streetUrchin ? BuyTickets("Dave", 5)
+  streetUrchin ? BuyTickets("TicketMeister", 21)
+  streetUrchin ? BuyTickets("Mr Langston", 1)
 
-	val streetUrchin = system.actorOf(Props(creator = {() => new TicketSeller(Game("Rugby Sevens", "02-06-2013", 30))}))
-	
-	streetUrchin ? BuyTickets("Howard", 4)
-	
-	streetUrchin ? BuyTickets("Dave", 5)
-	
-	streetUrchin ? BuyTickets("TicketMeister", 21)
-	
-	streetUrchin ? BuyTickets("Mr Langston", 1)
-	
-	val reportFuture = streetUrchin ? Report
+  val reportFuture = streetUrchin ? Report
 
-	reportFuture onSuccess {
-      case report : String => {
-        println(report);
-        system.shutdown()
-      }
-	}
-
+  reportFuture onSuccess {
+    case report : String => {
+      println(report);
+      system.shutdown()
+    }
   }
-  
 }

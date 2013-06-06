@@ -14,7 +14,11 @@ class WaitingForInitialisation extends Actor with Stash {
   def receive = {
     case r: Request if !initialised => stash()
     case r: Request if initialised  => println(s"Processing $r")
-    case Initialisation             => initialised = true; unstashAll()    
+    case Initialisation             => {
+      println("Initialised!"); 
+      initialised = true; 
+      unstashAll()    
+    }
   }
 }
 

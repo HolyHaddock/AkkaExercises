@@ -36,7 +36,7 @@ class TicketSeller(game : Game) extends Actor with ActorLogging {
 
 object TicketSeller extends App with TestActorSystem {
 
-  val streetUrchin = system.actorOf(Props(creator = {() => new TicketSeller(Game("Rugby Sevens", "02-06-2013", 30))}))
+  val streetUrchin = system.actorOf(Props(new TicketSeller(Game("Rugby Sevens", "02-06-2013", 30))))
 
   streetUrchin ? BuyTickets("Howard", 4)
   streetUrchin ? BuyTickets("Dave", 5)

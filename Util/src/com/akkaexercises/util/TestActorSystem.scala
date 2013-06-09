@@ -6,6 +6,6 @@ import akka.util.Timeout
 
 trait TestActorSystem extends App {
   val system = ActorSystem()
-  implicit val timeout = Timeout(5 seconds)
+  implicit val timeout = Timeout(10 seconds)
   implicit val ec = system.dispatcher
 }

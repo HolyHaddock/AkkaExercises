@@ -5,7 +5,7 @@ import akka.actor.Stash
 import com.akkaexercises.util.TestActorSystem
 import akka.actor.Props
 import scala.concurrent.Future
-import akka.pattern.pipe
+import akka.pattern.{pipe, ask}
 
 case class PrintTotal
 
@@ -21,7 +21,7 @@ class NonBlockingWait extends Actor with Stash {
       Future { someLongBlockingDBOp(index) } pipeTo self
       context become waitingForDBResponse
     }
-    case PrintTotal => println(total)
+    case PrintTotal => sender tell total
   }
   
   def waitingForDBResponse: Receive = {
@@ -32,11 +32,6 @@ class NonBlockingWait extends Actor with Stash {
       unstashAll
     }
     case _ => stash()
-  }
-  
-  def someLongBlockingDBOp(i: Integer) = {
-    Thread.sleep(1000); 
-    (i, i*5); 
   }
 }
 
@@ -49,5 +44,7 @@ object NonBlockingWait extends App with TestActorSystem {
   actor ! Request(4)
   actor ! Request(5)
   
-  actor ! PrintTotal
+  actor ? PrintTotal onSuccess {
+    case t => println(s"Total is: $t"); system.shutdown
+  }
 }

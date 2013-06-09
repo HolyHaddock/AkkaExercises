@@ -5,7 +5,6 @@ import akka.actor.Stash
 import com.akkaexercises.util.TestActorSystem
 import akka.actor.Props
  
-case class Request(index: Integer)
 case class Initialisation
 
 class WaitingForInitialisation extends Actor with Stash {
@@ -14,10 +13,9 @@ class WaitingForInitialisation extends Actor with Stash {
   def receive = {
     case r: Request if !initialised => stash()
     case r: Request if initialised  => println(s"Processing $r")
-    case Initialisation             => {
-      println("Initialised!"); 
-      initialised = true; 
-      unstashAll()    
+    case Initialisation             => { println("Initialised!"); 
+									     initialised = true; 
+									     unstashAll()    
     }
   }
 }

@@ -21,11 +21,12 @@ class TicketSeller(game : Game) extends Actor with ActorLogging {
   report += s"Selling ${game.attendance} tickets for ${game.name} on ${game.date}"
   
   def receive = {
-    case BuyTickets(name, amount) => if (remainingTickets >= amount) {
-      report += s"Sold ${amount} to ${name}."
-      remainingTickets -= amount;
-    } else 
-      report += s"Could not sell ${amount} to ${name}."
+    case BuyTickets(name, amount) => 
+      if (remainingTickets >= amount) {
+        report += s"Sold ${amount} to ${name}."
+        remainingTickets -= amount;
+      } 
+      else report += s"Could not sell ${amount} to ${name}."
       
     case Report => {
       report += s"I have ${game.attendance} tickets left."
@@ -38,10 +39,10 @@ object TicketSeller extends App with TestActorSystem {
 
   val streetUrchin = system.actorOf(Props(new TicketSeller(Game("Rugby Sevens", "02-06-2013", 30))))
 
-  streetUrchin ? BuyTickets("Howard", 4)
-  streetUrchin ? BuyTickets("Dave", 5)
-  streetUrchin ? BuyTickets("TicketMeister", 21)
-  streetUrchin ? BuyTickets("Mr Langston", 1)
+  streetUrchin ! BuyTickets("Howard", 4)
+  streetUrchin ! BuyTickets("Dave", 5)
+  streetUrchin ! BuyTickets("TicketMeister", 21)
+  streetUrchin ! BuyTickets("Mr Langston", 1)
 
   val reportFuture = streetUrchin ? Report
 

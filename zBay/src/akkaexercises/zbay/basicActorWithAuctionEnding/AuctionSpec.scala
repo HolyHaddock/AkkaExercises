@@ -36,7 +36,7 @@ class AuctionSpec extends Specification
       }
     }
     "be able to tell if auction has finished" in {
-      mockTimeService.currentTime() returns (exampleEndTime + 1.milli)
+      auction ! EndNotification
       responseFrom(auction ? StatusRequest) must be equalTo {
         StatusResponse(0, Ended)
       }
@@ -47,8 +47,7 @@ class AuctionSpec extends Specification
   implicit val timeout = Timeout(3, TimeUnit.SECONDS)
 
   val exampleEndTime = DateTime.now + 7.days
-  val mockTimeService = mock[TimeService].defaultReturn(DateTime.now)
 
-  lazy val auction = TestActorRef(new Auction(mockTimeService, exampleEndTime))
+  lazy val auction = TestActorRef(new Auction(exampleEndTime))
   def responseFrom(future: Future[Any]) = future.value.get.get
 }

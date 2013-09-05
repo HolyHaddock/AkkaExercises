@@ -1,15 +1,14 @@
-package akkaexercises.zbay
-
+package akkaexercises.zbay.basicActor
 
 import akka.actor.ActorSystem
 import akka.pattern._
 import akka.testkit.TestActorRef
 import org.specs2.mutable.Specification
-import akkaexercises.zbay.Auction.Protocol._
 import akka.util.Timeout
 import java.util.concurrent.TimeUnit
 import org.specs2.time.NoTimeConversions
 import scala.concurrent.Future
+import Auction.Protocol._
 
 class AuctionSpec extends Specification with NoTimeConversions { isolated
   "An auction" should {

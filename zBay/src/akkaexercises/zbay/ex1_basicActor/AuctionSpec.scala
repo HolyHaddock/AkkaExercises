@@ -1,4 +1,4 @@
-package akkaexercises.zbay.basicActor
+package akkaexercises.zbay.ex1_basicActor
 
 import akka.actor.ActorSystem
 import akka.pattern._

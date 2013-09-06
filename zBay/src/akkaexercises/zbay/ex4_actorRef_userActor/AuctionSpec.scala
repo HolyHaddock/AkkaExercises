@@ -1,4 +1,4 @@
-package akkaexercises.zbay.basicActorWithBidBlockingOnAuctionEnding
+package akkaexercises.zbay.ex4_actorRef_userActor
 
 import akka.actor.ActorSystem
 import akka.pattern._
@@ -12,6 +12,7 @@ import Auction.Protocol._
 import org.joda.time.DateTime
 import org.scala_tools.time.Imports._
 import org.specs2.mock.Mockito
+import User.Protocol._
 
 class AuctionSpec extends Specification
                      with NoTimeConversions
@@ -23,14 +24,14 @@ class AuctionSpec extends Specification
       }
     }
     "accept a bid and update the current bid amount" in {
-      auction ! Bid(1.00)
+      auction ! Bid(1.00, user)
       responseFrom(auction ? StatusRequest) must be equalTo {
         StatusResponse(1.00, Running)
       }
     }
     "not accept a bid for lower than the current highest" in {
-      auction ! Bid(1.00)
-      auction ! Bid(0.99)
+      auction ! Bid(1.00, user)
+      auction ! Bid(0.99, user)
       responseFrom(auction ? StatusRequest) must be equalTo {
         StatusResponse(1.00, Running)
       }
@@ -42,11 +43,17 @@ class AuctionSpec extends Specification
       }
     }
     "ignore bids after auction finish" in {
-      auction ! Bid(0.50)
+      auction ! Bid(0.50, user)
       auction ! EndNotification
-      auction ! Bid(1.00)
+      auction ! Bid(1.00, user)
       responseFrom(auction ? StatusRequest) must be equalTo {
         StatusResponse(0.50, Ended)
+      }
+    }
+    "tell the user actor that the bid was received" in {
+      auction ! Bid(0.50, user)
+      responseFrom(user ? ListAuctionsRequest) must be equalTo {
+        ListAuctionsResponse(Seq(auction))
       }
     }
   }
@@ -57,5 +64,6 @@ class AuctionSpec extends Specification
   val exampleEndTime = DateTime.now + 7.days
 
   lazy val auction = TestActorRef(new Auction(exampleEndTime))
+  lazy val user = TestActorRef(new User)
   def responseFrom(future: Future[Any]) = future.value.get.get
 }

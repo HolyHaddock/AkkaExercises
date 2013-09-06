@@ -1,4 +1,4 @@
-package akkaexercises.zbay.auctionAndUserActor
+package akkaexercises.zbay.ex4_actorRef_userActor
 
 import akka.actor.{ActorRef, Actor}
 

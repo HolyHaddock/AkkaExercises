@@ -1,4 +1,4 @@
-package akkaexercises.zbay.basicActorWithAuctionEnding
+package akkaexercises.zbay.ex3_behaviours_bidBlocking
 
 import akka.actor.ActorSystem
 import akka.pattern._
@@ -39,6 +39,14 @@ class AuctionSpec extends Specification
       auction ! EndNotification
       responseFrom(auction ? StatusRequest) must be equalTo {
         StatusResponse(0, Ended)
+      }
+    }
+    "ignore bids after auction finish" in {
+      auction ! Bid(0.50)
+      auction ! EndNotification
+      auction ! Bid(1.00)
+      responseFrom(auction ? StatusRequest) must be equalTo {
+        StatusResponse(0.50, Ended)
       }
     }
   }

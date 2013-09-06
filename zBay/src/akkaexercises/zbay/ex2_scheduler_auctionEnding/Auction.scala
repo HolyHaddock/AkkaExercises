@@ -1,4 +1,4 @@
-package akkaexercises.zbay.basicActorWithBidBlockingOnAuctionEnding
+package akkaexercises.zbay.ex2_scheduler_auctionEnding
 
 import akka.actor.Actor
 import org.joda.time.DateTime
@@ -10,23 +10,18 @@ class Auction(endTime: DateTime) extends Actor {
   import Auction.Protocol._
 
   var currentHighestBid = BigDecimal(0)
+  var currentStatus: State = Running
 
   context.system.scheduler.scheduleOnce(atEndTime(), self, EndNotification)(context.system.dispatcher)
 
-  def receive = runningBehaviour
-
-  val runningBehaviour: Receive = {
-    case StatusRequest   => sender ! StatusResponse(currentHighestBid, Running)
+  def receive = {
+    case StatusRequest   => sender ! StatusResponse(currentHighestBid, currentStatus)
     case Bid(value)      => currentHighestBid = currentHighestBid max value
-    case EndNotification => context.become(endedBehaviour)
-  }
-
-  val endedBehaviour: Receive  = {
-    case StatusRequest   => sender ! StatusResponse(currentHighestBid, Ended)
+    case EndNotification => currentStatus = Ended
   }
 
   def atEndTime() = FiniteDuration((DateTime.now() to endTime).millis,
-    TimeUnit.MILLISECONDS)
+                                   TimeUnit.MILLISECONDS)
 }
 
 object Auction {

@@ -1,4 +1,4 @@
-package akkaexercises.zbay.ex5_hierarchy_zBayActor
+package akkaexercises.zbay.ex6_hierarchy_zBayActor
 
 import akka.actor.{ActorRef, Actor}
 import org.joda.time.DateTime

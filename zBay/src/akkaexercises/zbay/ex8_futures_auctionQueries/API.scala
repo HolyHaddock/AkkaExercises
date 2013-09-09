@@ -20,16 +20,18 @@ class API extends Actor {
       auctionActorFor(auctionId).tell(Bid(value, userActorFor(userId)), sender)
     case AuctionStatusRequest(auctionId) =>
       auctionActorFor(auctionId).tell(StatusRequest, sender)
-    case Query(expectedEndTime, currentAuctions) =>
-      val matchingAuctionIdFutures = currentAuctions.map { (auctionId) =>
-        val detailsFuture = auctionActorFor(auctionId) ? DetailsRequest
-        detailsFuture.map {
-          case DetailsResponse(actualEndTime) if (actualEndTime==expectedEndTime) => Some(auctionId)
-          case _ => None
+    case Query(expectedEndTime, currentAuctionIds) =>
+      val auctionIds: Set[Future[Option[Long]]] = currentAuctionIds.map { (auctionId) =>
+        (auctionActorFor(auctionId) ? DetailsRequest).map {
+          case DetailsResponse(actualEndTime)
+            if (actualEndTime==expectedEndTime) => Some(auctionId)
+          case _                                => None
         }
       };
-      val matchingAuctionIdsFuture = Future.sequence(matchingAuctionIdFutures)
-      matchingAuctionIdsFuture.map(ids => AuctionQueryResponse(ids.flatMap(x => x))).pipeTo(sender)
+      val sequencedAuctionIds: Future[Set[Option[Long]]] = Future.sequence(auctionIds)
+      val matchingAuctionIds: Future[AuctionQueryResponse] = sequencedAuctionIds.map(ids =>
+        AuctionQueryResponse(ids.flatMap(x => x)))
+      matchingAuctionIds.pipeTo(sender)
   }
 
   def userActorFor(userId: Long) = context.actorFor(s"../../user$userId")

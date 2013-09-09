@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit
 import org.specs2.time.NoTimeConversions
 import scala.concurrent.{Await, Future}
 import Auction.Protocol._
+import Auction._
 import org.joda.time.DateTime
 import org.scala_tools.time.Imports._
 import org.specs2.mock.Mockito
@@ -25,7 +26,7 @@ class zBaySpec extends Specification
                                value     = 1.00)
       Thread.sleep(100)
       responseFrom(zBay ? AuctionStatusRequest(auctionId)) must be equalTo {
-        StatusResponse(1.00, RunningWithBids)
+        StatusResponse(1.00, Running)
       }
     }
     "be able to query for auctions by date" in {

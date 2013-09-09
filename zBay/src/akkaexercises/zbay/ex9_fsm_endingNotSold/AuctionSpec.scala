@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit
 import org.specs2.time.NoTimeConversions
 import scala.concurrent.Future
 import Auction.Protocol._
+import Auction._
 import org.joda.time.DateTime
 import org.scala_tools.time.Imports._
 import org.specs2.mock.Mockito
@@ -23,20 +24,20 @@ class AuctionSpec extends Specification
   "An auction" should {
     "be able to describe itself after it has been started" in {
       responseFrom(auction ? StatusRequest) must be equalTo {
-        StatusResponse(0.00, RunningNoBids)
+        StatusResponse(0.00, Running)
       }
     }
     "accept a bid and update the current bid amount" in {
       auction ! Bid(1.00, user)
       responseFrom(auction ? StatusRequest) must be equalTo {
-        StatusResponse(1.00, RunningWithBids)
+        StatusResponse(1.00, Running)
       }
     }
     "not accept a bid for lower than the current highest" in {
       auction ! Bid(1.00, user)
       auction ! Bid(0.99, user)
       responseFrom(auction ? StatusRequest) must be equalTo {
-        StatusResponse(1.00, RunningWithBids)
+        StatusResponse(1.00, Running)
       }
     }
     "be able to tell if auction has finished" in {

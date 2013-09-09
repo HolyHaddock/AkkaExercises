@@ -36,7 +36,7 @@ object zBay {
     case class AuctionStatusRequest(auctionId: Long)
     case class AuctionBidRequest(auctionId: Long,
                                  userId: Long,
-                                 value: BigDecimal)
+                                 value: Double)
     case class AuctionQueryRequest(endTime: DateTime)
     case class AuctionQueryResponse(ids: Set[Long])
   }

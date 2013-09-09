@@ -27,7 +27,7 @@ class API extends Actor {
             if (actualEndTime==expectedEndTime) => Some(auctionId)
           case _                                => None
         }
-      };
+      }
       val sequencedAuctionIds: Future[Set[Option[Long]]] = Future.sequence(auctionIds)
       val matchingAuctionIds: Future[AuctionQueryResponse] = sequencedAuctionIds.map(ids =>
         AuctionQueryResponse(ids.flatMap(x => x)))

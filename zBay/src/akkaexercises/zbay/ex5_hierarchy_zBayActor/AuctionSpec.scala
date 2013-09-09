@@ -1,4 +1,4 @@
-package akkaexercises.zbay.ex5_naming_addingIds
+package akkaexercises.zbay.ex5_hierarchy_zBayActor
 
 import akka.actor.ActorSystem
 import akka.pattern._
@@ -13,7 +13,9 @@ import org.joda.time.DateTime
 import org.scala_tools.time.Imports._
 import org.specs2.mock.Mockito
 import User.Protocol._
-import API.Protocol._
+import zBay.Protocol._
+import com.typesafe.config.{ConfigFactory, Config}
+import scala.collection.JavaConversions._
 
 class AuctionSpec extends Specification
                      with NoTimeConversions
@@ -58,9 +60,9 @@ class AuctionSpec extends Specification
       }
     }
     "be biddable by IDs" in {
-      api ! BidRequest(auctionId = 1,
-                       userId    = 1,
-                       value     = 1.00)
+      api ! AuctionBidRequest(auctionId = 1,
+                              userId    = 1,
+                              value     = 1.00)
       responseFrom(auction ? StatusRequest) must be equalTo {
         StatusResponse(1.00, Running)
       }

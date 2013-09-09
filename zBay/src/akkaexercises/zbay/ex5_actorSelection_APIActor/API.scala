@@ -1,9 +1,7 @@
-package akkaexercises.zbay.ex5_naming_addingIds
+package akkaexercises.zbay.ex5_actorSelection_APIActor
 
 import akka.actor.Actor
 import Auction.Protocol.Bid
-import scala.concurrent.duration._
-import akka.util.Timeout
 
 class API extends Actor {
   import API.Protocol._

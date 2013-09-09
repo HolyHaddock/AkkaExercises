@@ -1,4 +1,4 @@
-package akkaexercises.zbay.ex5_naming_addingIds
+package akkaexercises.zbay.ex5_actorSelection_APIActor
 
 import akka.actor.{ActorRef, Actor}
 
